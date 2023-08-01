@@ -21,3 +21,4 @@ server.use((req, res)=>{
 })
 
 server.listen(process.env.PORT);
+console.log('site rodando em http://localhost:'+process.env.PORT);
