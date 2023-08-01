@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 2: Projeto: Canil</title>
+</head>
+<body>
+    <h1>Módulo 2: Projeto: Canil</h1>
+    <p>13 aulas</p>
+
+
+<pre>
+    
+<h3>#1: Explicação do Projeto Canil</h3>
+
+material.zip
+
+<hr>
+<h3>#2: Iniciando o projeto</h3>
+
+criar projeto, servidor, rotas ... meio de campo
+
+
+git clone https://github.com/betoside/b7-nodets-mod02-canil.git
+npm init -y
+tsc --init
+
+----
+tsconfig.json
+----
+
+"target": "es6",
+"module": "commonjs",
+"rootDir": "./src",
+"moduleResolution": "node",
+"outDir": "./dist",
+
+
+----
+dependencias
+----
+
+npm install express
+npm install mustache dotenv
+npm install --save-dev @types/express @types/mustache-express @types/node
+
+create './src'
+create './src/server.ts'
+
+
+----
+dependencias que precisam estar globais
+----
+[ npm intall -g nodemon typescript ts-node ]
+
+nodemon
+typescript
+ts-node
+
+
+----
+b7-nodets-mod02-canil/package.json
+----
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "startdev": "nodemon -e ts,json,mustache src/server.ts"
+  },
+
+
+----
+b7-nodets-mod02-canil/README.md
+----
+
+
+<hr>
+<h3>#3: Criando o servidor</h3>
+
+----
+b7-nodets-mod02-canil/src/server.ts
+----
+import express from 'express';
+import dotenv from 'dotenv';
+import mustache from 'mustache-express';
+import path from 'path';
+
+dotenv.config();
+
+const server = express();
+
+server.set('view engine', 'mustache');
+server.set('views', path.join(__dirname, 'views'));
+server.engine('mustache', mustache());
+
+server.use(express.static(path.join(__dirname, '../public')));
+
+// Rotas
+
+
+server.listen(process.env.PORT);
+
+
+
+== x ==
+
+criada pasta '_html' para colocar o html de referência
+
+<hr>
+<h3>#4: Criando as rotas e controllers</h3>
+
+----
+b7-nodets-mod02-canil/src/routes/index.ts
+----
+
+import { Router } from 'express';
+
+const router = Router();
+
+router.get('/', (req, res)=>{
+    res.send('Home');
+})
+
+export default router;
+
+
+
+----
+b7-nodets-mod02-canil/src/server.ts
+----
+
+// Rotas
+server.use(mainRoutes);
+server.use((req, res)=>{
+    res.status(404).send('Pag não encontrada');
+})
+
+
+---- 
+b7-nodets-mod02-canil/src/controllers/pageController.ts
+----
+import { Request, Response } from 'express';
+
+export const home = (req: Request, res: Response) => {
+
+    res.send('Home no controller');
+
+    // res.render('pages/page');
+
+};
+
+export const dogs = (req: Request, res: Response) => {
+
+    res.send('dogs no controller');
+    // res.render('pages/page');
+
+};
+
+export const cats = (req: Request, res: Response) => {
+
+    res.send('cats no controller');
+    // res.render('pages/page');
+
+};
+
+export const fishes = (req: Request, res: Response) => {
+
+    res.send('fishes no controller');
+    // res.render('pages/page');
+
+};
+
+---- 
+b7-nodets-mod02-canil/src/controllers/searchController.ts
+----
+import { Request, Response } from 'express';
+
+export const search = (req: Request, res: Response) => {
+
+    // res.render('pages/search');
+
+};
+
+
+
+<hr>
+<h3>#5: Separando as views</h3>
+
+----
+b7-nodets-mod02-canil/src/views/partials/header.mustache
+----
+&lt;!DOCTYPE html>
+&lt;html lang="pt">
+&lt;head>
+    &lt;meta charset="UTF-8">
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0">
+    &lt;title>PetDevShop - O petshop do dev&lt;/title>
+    &lt;link rel="stylesheet" href="/css/style.css" />
+    &lt;link rel="icon" type="image/png" href="/images/favicon.png" />
+&lt;/head>
+&lt;body>
+&lt;header>
+    &lt;div class="container">
+        &lt;a href="/">PetDevShop&lt;/a>
+        &lt;form method="GET" action="/search">
+            &lt;input type="search" name="q" placeholder="Pesquise por raça" />
+        &lt;/form>
+    &lt;/div>
+&lt;/header>
+&lt;nav>
+    &lt;ul>
+        &lt;li class="active">&lt;a href="/">Todos&lt;/a>&lt;/li>
+        &lt;li class="">&lt;a href="/dogs">Cachorros&lt;/a>&lt;/li>
+        &lt;li class="">&lt;a href="/cats">Gatos&lt;/a>&lt;/li>
+        &lt;li class="">&lt;a href="/fishes">Peixes&lt;/a>&lt;/li>
+    &lt;/ul>
+&lt;/nav>
+
+
+----
+b7-nodets-mod02-canil/src/views/partials/footer.mustache
+----
+
+&lt;footer class="container">
+    Feito com ❤ pela B7Web
+&lt;/footer>
+&lt;/body>
+&lt;/html>
+
+----
+b7-nodets-mod02-canil/src/views/pages/page.mustache
+----
+{{>partials/header}}
+&lt;section class="banner" style="background-image: url('images/allanimals.jpg')">Todos os animais&lt;/section>
+&lt;h2>Todos os animais disponíveis para adoção&lt;/h2>
+
+&lt;div class="container list">
+    &lt;div class="item">
+        &lt;img src="images/pastor-alemao.jpg" class="item--image" />
+        &lt;div class="item--name">Pastor-alemão&lt;/div>
+        &lt;div class="item--color">Cor: Amarelo e Preto&lt;/div>
+        &lt;div class="item--genre">Gênero: Masculino&lt;/div>
+    &lt;/div>
+&lt;/div>
+{{>partials/footer}}
+
+
+
+
+<hr>
+<h3>#6: Modificando dados em cada página</h3>
+
+---- 
+b7-nodets-mod02-canil/src/controllers/pageController.ts
+---- 
+import { Request, Response } from 'express';
+
+export const home = (req: Request, res: Response) => {
+    res.render('pages/page', {
+        banner: {
+            title: 'Todos os animais',
+            background: 'allanimals.jpg'
+        }
+    });
+};
+
+export const dogs = (req: Request, res: Response) => {
+
+    res.render('pages/page', {
+        banner: {
+            title: 'Cachorros',
+            background: 'banner_dog.jpg'
+        }
+    });
+
+};
+
+export const cats = (req: Request, res: Response) => {
+
+    res.render('pages/page', {
+        banner: {
+            title: 'Gatos',
+            background: 'banner_cat.jpg'
+        }
+    });
+
+};
+
+export const fishes = (req: Request, res: Response) => {
+
+    res.render('pages/page', {
+        banner: {
+            title: 'Peixes',
+            background: 'banner_fish.jpg'
+        }
+    });
+
+};
+
+---- 
+b7-nodets-mod02-canil/src/views/pages/page.mustache
+---- 
+{{>partials/header}}
+
+{{#banner}}
+&lt;section class="banner" style="background-image: url('images/{{background}}')">{{title}}&lt;/section>
+&lt;h2>{{title}} disponíveis para adoção&lt;/h2>
+{{/banner}}
+
+&lt;div class="container list">
+    &lt;div class="item">
+        &lt;img src="images/pastor-alemao.jpg" class="item--image" />
+        &lt;div class="item--name">Pastor-alemão&lt;/div>
+        &lt;div class="item--color">Cor: Amarelo e Preto&lt;/div>
+        &lt;div class="item--genre">Gênero: Masculino&lt;/div>
+    &lt;/div>
+&lt;/div>
+{{>partials/footer}}
+
+
+
+
+<hr>
+<h3>#7: Ativando o menu</h3>
+
+helper
+
+----
+b7-nodets-mod02-canil/src/views/partials/header.mustache
+----
+
+&lt;nav>
+    &lt;ul>
+        &lt;li class="{{#menu.all}}active{{/menu.all}}">&lt;a href="/">Todos&lt;/a>&lt;/li>
+        &lt;li class="{{#menu.dog}}active{{/menu.dog}}">&lt;a href="/dogs">Cachorros&lt;/a>&lt;/li>
+        &lt;li class="{{#menu.cat}}active{{/menu.cat}}">&lt;a href="/cats">Gatos&lt;/a>&lt;/li>
+        &lt;li class="{{#menu.fish}}active{{/menu.fish}}">&lt;a href="/fishes">Peixes&lt;/a>&lt;/li>
+    &lt;/ul>
+&lt;/nav>
+
+
+----
+b7-nodets-mod02-canil/src/helpers/createMenuObject.ts
+----
+
+type MenuOptions = '' | 'all' | 'dog' | 'cat' | 'fish';
+
+export const createMenuObject = (activeMenu: MenuOptions) => {
+
+    let returnObject = {
+        all: false,
+        dog: false,
+        cat: false,
+        fish: false
+    }
+
+    if(activeMenu !== ''){
+        returnObject[activeMenu] = true;
+    }
+
+    return returnObject;
+
+}
+
+<hr>
+<h3>#8: Criando o Model Pet 1</h3>
+
+----
+b7-nodets-mod02-canil/src/models/pet.ts
+----
+// Pegar todos os pets
+// Filtrar os pets por tipo
+// Filtrar os pets pelo nome da raça
+
+type Pet = {
+    type: 'dog' | 'cat' | 'fish',
+    image: string,
+    name: string,
+    color: string,
+    sex: 'Macho' | 'Fêmea'
+}
+
+
+const data: Pet[] = [
+    {
+        type: 'dog',
+        image: 'pastor-alemao.jpg',
+        name: 'Pastor-alemão',
+        color: 'Amarelo e Preto',
+        sex: 'Macho'
+    }
+]
+
+
+export const Pet = {
+    getAll: (): Pet[] => {
+        return data;
+    }
+};
+
+<hr>
+<h3>#9: Criando o Model Pet 2</h3>
+
+----
+b7-nodets-mod02-canil/src/models/pet.ts
+----
+
+export const Pet = {
+    getAll: (): Pet[] => {
+        return data;
+    },
+    getFromType: (type: PetType): Pet[] => {
+
+        // step 1:
+        // return data.filter(item => {
+        //     if(item.type === type){
+        //         return true;
+        //     } else {
+        //         return false;
+        //     }
+        // });
+
+        // step 2:
+        // return data.filter(item => {
+        //     return (item.type === type);
+        // });
+
+        // step 3:
+        return data.filter(item => item.type === type);
+
+    },
+    getFromName: (name: string): Pet[] => {
+        return data.filter(item => {
+            if(item.name.toLowerCase().indexOf(name.toLowerCase()) > -1){
+                return true;
+            } else {
+                return false;
+            }
+        });
+    }
+};
+
+<hr>
+<h3>#10: Listando os pets no controller</h3>
+
+----
+b7-nodets-mod02-canil/src/controllers/pageController.ts
+----
+import { Pet } from '../models/pet';
+
+
+==x==
+
+let list = Pet.getFromType('dog');
+let list = Pet.getAll();
+
+==x==
+
+export const dogs = (req: Request, res: Response) => {
+
+    let list = Pet.getFromType('dog');
+
+    res.render('pages/page', {
+        menu: createMenuObject('dog'),
+        banner: {
+            title: 'Cachorros',
+            background: 'banner_dog.jpg',
+            statusMenu: 'dog'
+        },
+        list
+    });
+
+};
+
+----
+b7-nodets-mod02-canil/src/views/pages/page.mustache
+----
+
+&lt;div class="container list">
+    {{#list}}
+        &lt;div class="item">
+            &lt;img src="images/{{ image }}" class="item--image" />
+            &lt;div class="item--name">{{ name }}&lt;/div>
+            &lt;div class="item--color">Cor: {{ color }}&lt;/div>
+            &lt;div class="item--genre">Gênero: {{ sex }}&lt;/div>
+        &lt;/div>
+    {{/list}}
+&lt;/div>
+
+
+
+<hr>
+<h3>#11: Fazendo a busca e o 404</h3>
+
+----
+b7-nodets-mod02-canil/src/controllers/searchController.ts
+----
+import { Request, Response } from 'express';
+import { createMenuObject } from '../helpers/createMenuObject';
+import { Pet } from '../models/pet';
+
+export const search = (req: Request, res: Response) => {
+
+    let query: string = req.query.q as string;
+
+    if(!query){
+        res.redirect('/');
+        return;
+    }
+
+    let list = Pet.getFromName(query);
+
+    res.render('pages/page', {
+        menu: createMenuObject(''),
+        list,
+        query
+    });
+
+};
+
+----
+b7-nodets-mod02-canil/src/views/partials/header.mustache
+----
+&lt;input type="search" name="q" placeholder="Pesquise por raça" value='{{ query }}' />
+
+
+==x==
+
+----
+b7-nodets-mod02-canil/src/views/pages/404.mustache
+----
+{{>partials/header}}
+
+
+&lt;div class="container list">
+&lt;/div>
+
+&lt;div class="container no-list">
+    &lt;h2>Página não encontrada&lt;/h2>
+&lt;/div>
+
+{{>partials/footer}}
+
+
+
+----
+b7-nodets-mod02-canil/src/server.ts
+----
+server.use((req, res)=>{
+    res.status(404).render('pages/404');
+})
+
+
+
+
+<hr>
+<h3>#12: Colocando o projeto no ar 1</h3>
+
+----
+b7-nodets-mod02-canil/package.json
+----
+
+"engines": {
+    "node": "14.x"
+},
+
+
+"scripts": {
+    "start": "node dist/server.js",
+    "postinstall": "",
+    "test": "echo \"Error: no test specified\" && exit 1",
+"gogogo": "nodemon -e ts,json,mustache src/server.ts"
+},
+
+
+
+----
+b7-nodets-mod02-canil/Procfile
+----
+web: npm start
+
+----
+no Terminal:
+----
+betosideArena:b7-nodets-mod02-canil betoside$ tsc
+betosideArena:b7-nodets-mod02-canil betoside$ node dist/server.js
+
+Obs: neste ponto precisa instalar uma dependência para copiar os arquivos "DIST/..."
+betosideArena:b7-nodets-mod02-canil betoside$ npm install --save-dev copyfiles
+
+*Adicionando comando:
+
+
+"scripts": {
+    "start": "node dist/server.js",
+    "postinstall": "tsc && copyfiles -u 1 src/**/*.mustache dist/",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gogogo": "nodemon -e ts,json,mustache src/server.ts"
+  },
+
+
+
+
+
+<hr>
+<h3>#13: Colocando o projeto no ar 2</h3>
+
+betosideArena:b7-nodets-mod02-canil betoside$ npm install typescript
+
+
+----
+b7-nodets-mod02-canil/package.json
+----
+
+"scripts": {
+    "tsc": "tsc"
+    "start": "node dist/server.js",
+    "postinstall": "npm run tsc && copyfiles -u 1 src/**/*.mustache dist/",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gogogo": "nodemon -e ts,json,mustache src/server.ts"
+  },
+
+
+</pre>
+</body>
+</html>

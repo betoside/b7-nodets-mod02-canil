@@ -8,4 +8,4 @@ Projeto treinamento Node + Typescript
 `npm install`
 
 ### Para rodar o projeto
-`npm run startdev`
+`npm run gogogo`
